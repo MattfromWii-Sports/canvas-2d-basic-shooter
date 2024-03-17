@@ -8,22 +8,74 @@
         <title>2d canvas space game</title>
     </head>
     <style>
-        body {
+        * {
             padding: 0;
             margin: 0;
+        }
+        html {
+            font-size: 12px;
+        }
+        body {
             overflow: hidden;
+            background-color: black;
         }
         .score-container {
             position: fixed;
             color: white;
-            font-size: 14px;
+            font-size: 1.4rem;
             margin-left: 4px;
             margin-top: 3px;
             user-select: none;
         }
+        .modal-container {
+            display: flex;
+            position: fixed;
+            justify-content: center;
+            align-items: center;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100svh;
+        }
+        .modal {
+            background-color: white;
+            padding: 4rem;
+            width: 60vw;
+            min-width: 30rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            font-size: 5rem;
+            line-height: 1;
+        }
+        .modal > p {
+            color: gray;
+            font-size: 1rem;
+            margin-top: -4px;
+            margin-bottom: 1rem;
+        }
+        .start-btn {
+            color: white;
+            background-color: lightskyblue;
+            border-style: none;
+            border-radius: 30vw/50svh;
+            width: 100%;
+            font-size: 1.5rem;
+            padding: 0.8rem;
+        }
     </style>
     <body>
         <div class="score-container"><span>Score: </span><span id="score-el">0</span></div>
+        <div class="modal-container">
+            <div class="modal">
+                <h1 id="final-score">0</h1>
+                <p>Points</p>
+                <button class="start-btn">Start Game</button>
+            </div>
+        </div>
         <canvas></canvas>
     </body>
 </html>

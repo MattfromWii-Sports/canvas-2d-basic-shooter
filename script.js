@@ -5,6 +5,9 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 
 const scoreEl = document.querySelector('#score-el');
+const startGameBtn = document.querySelector('.start-btn');
+const modalContainer = document.querySelector('.modal-container');
+const scoreFinalEl = document.querySelector('#final-score');
 
 class Player {
     constructor(x, y, radius, color) {
@@ -102,10 +105,21 @@ class Particle {
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
-const player = new Player(x, y, 15, 'white');
-const projectiles = [];
-const enemies = [];
-const particles = [];
+let player = new Player(x, y, 15, 'white');
+let projectiles = [];
+let enemies = [];
+let particles = [];
+
+function init() {
+    player = new Player(x, y, 15, 'white');
+    projectiles = [];
+    enemies = [];
+    particles = [];
+    score = 0;
+    scoreEl.textContent = score;
+    scoreFinalEl.textContent = score;
+
+}
 
 function spawnEnemies() {
     setInterval(() => {
@@ -167,6 +181,8 @@ function animate() {
         //ends game, player hit
         if(dist - enemy.radius - player.radius < 1) {
             cancelAnimationFrame(animationId);
+            modalContainer.style.display = 'flex';
+            scoreFinalEl.textContent = score;
         }
 
         //Projectile to Enemy collision
@@ -224,5 +240,9 @@ addEventListener('click', (e) => {
         velocity))
 });
 
-animate();
-spawnEnemies();
+startGameBtn.addEventListener('click', () => {
+    init();
+    animate();
+    spawnEnemies();
+    modalContainer.style.display = 'none';
+});
