@@ -1,6 +1,5 @@
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d'); //canvas context
-
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
@@ -66,13 +65,44 @@ class Enemy {
     }
 }
 
+const friction = 0.97;
+class Particle {
+    constructor(x, y, radius, color, velocity) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.color = color;
+        this.velocity = velocity;
+        this.alpha = 1;
+    }
+
+    draw() {
+        c.save();
+        c.globalAlpha = this.alpha;
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        c.fillStyle = this.color;
+        c.fill();
+        c.restore();
+    }
+
+    update() {
+        this.draw();
+        this.velocity.x *= friction;
+        this.velocity.y *= friction;
+        this.x += this.velocity.x;
+        this.y += this.velocity.y; 
+        this.alpha -= 0.01;
+    }
+}
+
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
 const player = new Player(x, y, 15, 'white');
-
 const projectiles = [];
 const enemies = [];
+const particles = [];
 
 function spawnEnemies() {
     setInterval(() => {
@@ -104,9 +134,17 @@ function animate() {
     c.fillRect(0, 0, canvas.width, canvas.height);
     player.draw();
 
+    particles.forEach((particle, index) => {
+        if(particle.alpha <= 0) {
+            particles.splice(index, 1);
+        } else {
+            particle.update();
+        }
+    });
+
     projectiles.forEach((projectile, index) => {
         projectile.update();
-        //remove from edges of screen
+        //remove projectiles from edges of screen
         if(projectile.x + projectile.radius < 0 || 
             projectile.x - projectile.radius > canvas.width ||
             projectile.y + projectile.radius < 0 || 
@@ -121,17 +159,37 @@ function animate() {
     enemies.forEach((enemy, index) => {
         enemy.update();
         const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+        //ends game, player hit
         if(dist - enemy.radius - player.radius < 1) {
             cancelAnimationFrame(animationId);
         }
-
+        //Projectile to Enemy collision
         projectiles.forEach((projectile, projectileIndex) => {
             const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
             if(dist - enemy.radius - projectile.radius < 1) {
-                setTimeout(() => {
-                    enemies.splice(index, 1);
-                    projectiles.splice(projectileIndex, 1);
-                }, 0);
+                //create particle explosion
+                for(let i = 0; i < enemy.radius * 1.5; i++) {
+                    particles.push(new Particle(projectile.x, 
+                        projectile.y, 
+                        Math.random() * 2, 
+                        enemy.color, 
+                        {
+                            x: (Math.random() - 0.5) * (Math.random() * 5), 
+                            y: (Math.random() - 0.5) * (Math.random() * 5)
+                        }));
+                }
+
+                if(enemy.radius - 10 > 6) {
+                    gsap.to(enemy, {radius: enemy.radius - 10});
+                    setTimeout(() => {
+                        projectiles.splice(projectileIndex, 1);
+                    }, 0);
+                } else {
+                    setTimeout(() => {
+                        enemies.splice(index, 1);
+                        projectiles.splice(projectileIndex, 1);
+                    }, 0);
+                }
             }
         })
     })
