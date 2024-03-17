@@ -11,9 +11,19 @@
         body {
             padding: 0;
             margin: 0;
+            overflow: hidden;
+        }
+        .score-container {
+            position: fixed;
+            color: white;
+            font-size: 14px;
+            margin-left: 4px;
+            margin-top: 3px;
+            user-select: none;
         }
     </style>
     <body>
+        <div class="score-container"><span>Score: </span><span id="score-el">0</span></div>
         <canvas></canvas>
     </body>
 </html>

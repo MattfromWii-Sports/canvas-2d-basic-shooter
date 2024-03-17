@@ -1,7 +1,10 @@
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d'); //canvas context
+
 canvas.width = innerWidth;
 canvas.height = innerHeight;
+
+const scoreEl = document.querySelector('#score-el');
 
 class Player {
     constructor(x, y, radius, color) {
@@ -128,6 +131,7 @@ function spawnEnemies() {
 }
 
 let animationId;
+let score = 0;
 function animate() {
     animationId = requestAnimationFrame(animate);
     c.fillStyle = 'rgba(0,0,0,0.1)';
@@ -159,14 +163,17 @@ function animate() {
     enemies.forEach((enemy, index) => {
         enemy.update();
         const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+
         //ends game, player hit
         if(dist - enemy.radius - player.radius < 1) {
             cancelAnimationFrame(animationId);
         }
+
         //Projectile to Enemy collision
         projectiles.forEach((projectile, projectileIndex) => {
             const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
             if(dist - enemy.radius - projectile.radius < 1) {
+            
                 //create particle explosion
                 for(let i = 0; i < enemy.radius * 1.5; i++) {
                     particles.push(new Particle(projectile.x, 
@@ -180,11 +187,19 @@ function animate() {
                 }
 
                 if(enemy.radius - 10 > 6) {
+                    //decrease enemy size
+                    score += 100;
+                    scoreEl.textContent = score; 
+
                     gsap.to(enemy, {radius: enemy.radius - 10});
                     setTimeout(() => {
                         projectiles.splice(projectileIndex, 1);
                     }, 0);
                 } else {
+                    //remove enemy
+                    score += 250;
+                    scoreEl.textContent = score;
+
                     setTimeout(() => {
                         enemies.splice(index, 1);
                         projectiles.splice(projectileIndex, 1);
