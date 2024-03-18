@@ -110,6 +110,7 @@ let projectiles = [];
 let enemies = [];
 let particles = [];
 
+//reset
 function init() {
     player = new Player(x, y, 15, 'white');
     projectiles = [];
@@ -120,10 +121,10 @@ function init() {
     scoreFinalEl.textContent = score;
 
 }
-
+//enemy spawn
 function spawnEnemies() {
     setInterval(() => {
-        const radius = Math.random() * (30 - 4) + 4;
+        const radius = Math.random() * (35 - 5) + 5;
         let x;
         let y;
         if (Math.random() < 0.5) {
@@ -225,7 +226,7 @@ function animate() {
         })
     })
 }
-
+//projectile spawn
 addEventListener('click', (e) => {
     const angle = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width/2,);
     const velocity = {
@@ -239,7 +240,7 @@ addEventListener('click', (e) => {
         'white', 
         velocity))
 });
-
+//start loop
 startGameBtn.addEventListener('click', () => {
     init();
     animate();
