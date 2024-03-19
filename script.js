@@ -10,11 +10,12 @@ const modalContainer = document.querySelector('.modal-container');
 const scoreFinalEl = document.querySelector('#final-score');
 
 class Player {
-    constructor(x, y, radius, color) {
+    constructor(x, y, radius, color, speed) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.color = color;
+        this.speed = speed;
     }
 
     draw() {
@@ -22,6 +23,22 @@ class Player {
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = this.color;
         c.fill();
+    }
+
+    update() {
+        if("ArrowDown" in keysDown && this.y + this.radius < canvas.height - this.speed) {
+            this.y += this.speed;
+        }
+        if("ArrowUp" in keysDown && this.y - this.radius > 0) {
+            this.y -= this.speed;
+        }
+        if("ArrowLeft" in keysDown && this.x - this.radius > 0) {
+            this.x -= this.speed;
+        }
+        if("ArrowRight" in keysDown && this.x + this.radius < canvas.width - this.speed) {
+            this.x += this.speed;
+        }
+        this.draw();
     }
 }
 
@@ -105,14 +122,14 @@ class Particle {
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
-let player = new Player(x, y, 15, 'white');
+let player = new Player(x, y, 15, 'white', 5);
 let projectiles = [];
 let enemies = [];
 let particles = [];
 
 //reset
 function init() {
-    player = new Player(x, y, 15, 'white');
+    player = new Player(x, y, 15, 'white', 5);
     projectiles = [];
     enemies = [];
     particles = [];
@@ -152,6 +169,8 @@ function animate() {
     c.fillStyle = 'rgba(0,0,0,0.1)';
     c.fillRect(0, 0, canvas.width, canvas.height);
     player.draw();
+
+player.update();
 
     particles.forEach((particle, index) => {
         if(particle.alpha <= 0) {
@@ -226,6 +245,16 @@ function animate() {
         })
     })
 }
+
+//player movement
+let keysDown = {};
+addEventListener("keydown", function(e) {
+    keysDown[e.key] = true;
+}, false);
+addEventListener("keyup", function(e) {
+    delete keysDown[e.key];
+}, false);
+
 //projectile spawn
 addEventListener('click', (e) => {
     const angle = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width/2,);
