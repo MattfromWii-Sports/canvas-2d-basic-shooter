@@ -26,16 +26,16 @@ class Player {
     }
 
     update() {
-        if("ArrowDown" in keysDown && this.y + this.radius < canvas.height - this.speed) {
+        if(('ArrowDown' in keysDown || mobileTouch === 'down')&& this.y + this.radius < canvas.height - this.speed) {
             this.y += this.speed;
         }
-        if("ArrowUp" in keysDown && this.y - this.radius > 0) {
+        if('ArrowUp' in keysDown && this.y - this.radius > 0) {
             this.y -= this.speed;
         }
-        if("ArrowLeft" in keysDown && this.x - this.radius > 0) {
+        if('ArrowLeft' in keysDown && this.x - this.radius > 0) {
             this.x -= this.speed;
         }
-        if("ArrowRight" in keysDown && this.x + this.radius < canvas.width - this.speed) {
+        if('ArrowRight' in keysDown && this.x + this.radius < canvas.width - this.speed) {
             this.x += this.speed;
         }
         this.draw();
@@ -164,7 +164,7 @@ function spawnEnemies() {
             y: Math.sin(angle)
         }
         enemies.push(new Enemy(x, y, radius, color, velocity));
-    }, 1000);
+    }, 1200);
 }
 
 let animationId;
@@ -251,14 +251,22 @@ player.update();
     })
 }
 
-//player movement
+//player movement - desktop
 let keysDown = {};
-addEventListener("keydown", function(e) {
+addEventListener('keydown', function(e) {
     keysDown[e.key] = true;
 }, false);
-addEventListener("keyup", function(e) {
+addEventListener('keyup', function(e) {
     delete keysDown[e.key];
 }, false);
+//player movement - phone
+let mobileTouch;
+addEventListener('touchmove', (e) => {
+    mobileTouch = 'down';
+});
+addEventListener('touchend', (e) => {
+    mobileTouch = null;
+});
 
 //projectile spawn
 addEventListener('click', (e) => {
