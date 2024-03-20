@@ -122,7 +122,7 @@ class Particle {
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
-let player = new Player(x, y, 15, 'white', 5);
+let player = new Player(x, y, 15, 'white', 3);
 let projectiles = [];
 let enemies = [];
 let particles = [];
@@ -257,14 +257,14 @@ addEventListener("keyup", function(e) {
 
 //projectile spawn
 addEventListener('click', (e) => {
-    const angle = Math.atan2(e.clientY - canvas.height/2, e.clientX - canvas.width/2,);
+    const angle = Math.atan2(e.clientY - player.y, e.clientX - player.x,);
     const velocity = {
         x: Math.cos(angle) * 5,
         y: Math.sin(angle) * 5
     }
     projectiles.push(new Projectile(
-        canvas.width / 2, 
-        canvas.height / 2, 
+        player.x, 
+        player.y, 
         5, 
         'white', 
         velocity))
