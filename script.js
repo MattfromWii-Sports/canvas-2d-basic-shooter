@@ -82,9 +82,14 @@ class Enemy {
     }
 
     update() {
-        this.draw();
+        const angle = Math.atan2(player.y - this.y, player.x - this.x,);
+        this.velocity = {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        }
         this.x += this.velocity.x;
         this.y += this.velocity.y; 
+        this.draw();
     }
 }
 
@@ -153,7 +158,7 @@ function spawnEnemies() {
         }
         const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
 
-        const angle = Math.atan2(canvas.height/2 - y, canvas.width/2 - x,);
+        const angle = Math.atan2(player.y - y, player.x - x,);
         const velocity = {
             x: Math.cos(angle),
             y: Math.sin(angle)
