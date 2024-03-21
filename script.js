@@ -9,6 +9,30 @@ const startGameBtn = document.querySelector('.start-btn');
 const modalContainer = document.querySelector('.modal-container');
 const scoreFinalEl = document.querySelector('#final-score');
 
+//player movement - desktop
+let keysDown = {};
+addEventListener('keydown', function(e) {
+    keysDown[e.key] = true;
+}, false);
+addEventListener('keyup', function(e) {
+    delete keysDown[e.key];
+}, false);
+
+//player movement - phone
+let mobileTouch;
+addEventListener('touchmove', (e) => {
+    let diffX = e.touches[0].clientX - player.x;
+    let diffY = e.touches[0].clientY - player.y;
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        mobileTouch = diffX > 0 ? 'right' : 'left';
+    } else {
+        mobileTouch = diffY > 0 ? 'down' : 'up';
+    }
+});
+addEventListener('touchend', (e) => {
+    mobileTouch = null;
+});
+
 class Player {
     constructor(x, y, radius, color, speed) {
         this.x = x;
@@ -29,13 +53,13 @@ class Player {
         if(('ArrowDown' in keysDown || mobileTouch === 'down')&& this.y + this.radius < canvas.height - this.speed) {
             this.y += this.speed;
         }
-        if('ArrowUp' in keysDown && this.y - this.radius > 0) {
+        if(('ArrowUp' in keysDown || mobileTouch === 'up') && this.y - this.radius > 0) {
             this.y -= this.speed;
         }
-        if('ArrowLeft' in keysDown && this.x - this.radius > 0) {
+        if(('ArrowLeft' in keysDown || mobileTouch === 'left') && this.x - this.radius > 0) {
             this.x -= this.speed;
         }
-        if('ArrowRight' in keysDown && this.x + this.radius < canvas.width - this.speed) {
+        if(('ArrowRight' in keysDown || mobileTouch === 'right') && this.x + this.radius < canvas.width - this.speed) {
             this.x += this.speed;
         }
         this.draw();
@@ -251,23 +275,6 @@ player.update();
     })
 }
 
-//player movement - desktop
-let keysDown = {};
-addEventListener('keydown', function(e) {
-    keysDown[e.key] = true;
-}, false);
-addEventListener('keyup', function(e) {
-    delete keysDown[e.key];
-}, false);
-//player movement - phone
-let mobileTouch;
-addEventListener('touchmove', (e) => {
-    mobileTouch = 'down';
-});
-addEventListener('touchend', (e) => {
-    mobileTouch = null;
-});
-
 //projectile spawn
 addEventListener('click', (e) => {
     const angle = Math.atan2(e.clientY - player.y, e.clientX - player.x,);
@@ -282,6 +289,7 @@ addEventListener('click', (e) => {
         'white', 
         velocity))
 });
+
 //start loop
 startGameBtn.addEventListener('click', () => {
     init();
