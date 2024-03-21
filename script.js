@@ -165,30 +165,37 @@ function init() {
     score = 0;
     scoreEl.textContent = score;
     scoreFinalEl.textContent = score;
-
+    stopEnemySpawn(); //stop multiple enemy spawn intervals
 }
 //enemy spawn
-function spawnEnemies() {
-    setInterval(() => {
-        const radius = Math.random() * (35 - 5) + 5;
-        let x;
-        let y;
-        if (Math.random() < 0.5) {
-            x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
-            y = Math.random() * canvas.height;
-        } else {
-            x = Math.random() * canvas.width;
-            y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
-        }
-        const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
+let enemyInterval;
+function spawnRandomEnemy() {
+    const radius = Math.random() * (35 - 5) + 5;
+    let x;
+    let y;
+    if (Math.random() < 0.5) {
+        x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
+        y = Math.random() * canvas.height;
+    } else {
+        x = Math.random() * canvas.width;
+        y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
+    }
+    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
 
-        const angle = Math.atan2(player.y - y, player.x - x,);
-        const velocity = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
-        }
-        enemies.push(new Enemy(x, y, radius, color, velocity));
-    }, 1200);
+    const angle = Math.atan2(player.y - y, player.x - x,);
+    const velocity = {
+        x: Math.cos(angle),
+        y: Math.sin(angle)
+    }
+    console.log(enemies);
+    enemies.push(new Enemy(x, y, radius, color, velocity));
+}
+function startEnemySpawn() {
+    enemyInterval = setInterval(spawnRandomEnemy, 1000);
+}
+function stopEnemySpawn() {
+    clearInterval(enemyInterval);
+    enemyInterval = null;
 }
 
 let animationId;
@@ -229,6 +236,7 @@ player.update();
 
         //ends game, player hit
         if(dist - enemy.radius - player.radius < 1) {
+            stopEnemySpawn(); //stops from endlessly adding enemy to enemies array 
             cancelAnimationFrame(animationId);
             modalContainer.style.display = 'flex';
             scoreFinalEl.textContent = score;
@@ -294,6 +302,6 @@ addEventListener('click', (e) => {
 startGameBtn.addEventListener('click', () => {
     init();
     animate();
-    spawnEnemies();
+    startEnemySpawn();
     modalContainer.style.display = 'none';
 });
