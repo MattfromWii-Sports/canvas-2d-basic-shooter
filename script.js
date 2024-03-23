@@ -41,14 +41,12 @@ class Player {
         this.color = color;
         this.speed = speed;
     }
-
     draw() {
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = this.color;
         c.fill();
     }
-
     update() {
         if(('ArrowDown' in keysDown || mobileTouch === 'down')&& this.y + this.radius < canvas.height - this.speed) {
             this.y += this.speed;
@@ -74,14 +72,12 @@ class Projectile {
         this.color = color;
         this.velocity = velocity;
     }
-
     draw() {
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = this.color;
         c.fill();
     }
-
     update() {
         this.draw();
         this.x += this.velocity.x;
@@ -97,14 +93,12 @@ class Enemy {
         this.color = color;
         this.velocity = velocity;
     }
-
     draw() {
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         c.fillStyle = this.color;
         c.fill();
     }
-
     update() {
         const angle = Math.atan2(player.y - this.y, player.x - this.x,);
         this.velocity = {
@@ -127,7 +121,6 @@ class Particle {
         this.velocity = velocity;
         this.alpha = 1;
     }
-
     draw() {
         c.save();
         c.globalAlpha = this.alpha;
@@ -137,7 +130,6 @@ class Particle {
         c.fill();
         c.restore();
     }
-
     update() {
         this.draw();
         this.velocity.x *= friction;
@@ -181,13 +173,11 @@ function spawnRandomEnemy() {
         y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius;
     }
     const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-
     const angle = Math.atan2(player.y - y, player.x - x,);
     const velocity = {
         x: Math.cos(angle),
         y: Math.sin(angle)
     }
-    console.log(enemies);
     enemies.push(new Enemy(x, y, radius, color, velocity));
 }
 function startEnemySpawn() {
@@ -204,9 +194,9 @@ function animate() {
     animationId = requestAnimationFrame(animate);
     c.fillStyle = 'rgba(0,0,0,0.1)';
     c.fillRect(0, 0, canvas.width, canvas.height);
-    player.draw();
 
-player.update();
+    player.draw();
+    player.update();
 
     particles.forEach((particle, index) => {
         if(particle.alpha <= 0) {
@@ -246,7 +236,6 @@ player.update();
         projectiles.forEach((projectile, projectileIndex) => {
             const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
             if(dist - enemy.radius - projectile.radius < 1) {
-            
                 //create particle explosion
                 for(let i = 0; i < enemy.radius * 1.5; i++) {
                     particles.push(new Particle(projectile.x, 
@@ -258,21 +247,19 @@ player.update();
                             y: (Math.random() - 0.5) * (Math.random() * 5)
                         }));
                 }
-
+                //effect to enemy
                 if(enemy.radius - 10 > 6) {
                     //decrease enemy size
                     score += 100;
                     scoreEl.textContent = score; 
-
                     gsap.to(enemy, {radius: enemy.radius - 10});
                     setTimeout(() => {
                         projectiles.splice(projectileIndex, 1);
-                    }, 0);
+                    }, 0); //setTimeout used to remove flickering of enemies
                 } else {
                     //remove enemy
                     score += 250;
                     scoreEl.textContent = score;
-
                     setTimeout(() => {
                         enemies.splice(index, 1);
                         projectiles.splice(projectileIndex, 1);
@@ -290,12 +277,7 @@ addEventListener('click', (e) => {
         x: Math.cos(angle) * 5,
         y: Math.sin(angle) * 5
     }
-    projectiles.push(new Projectile(
-        player.x, 
-        player.y, 
-        5, 
-        'white', 
-        velocity))
+    projectiles.push(new Projectile(player.x, player.y, 5, 'white', velocity))
 });
 
 //start loop
